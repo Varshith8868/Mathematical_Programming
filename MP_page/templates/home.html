@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        body {
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background-color: #121212;
+            color: rgb(0, 0, 0);
+        }
+
+        /* Light Mode - Pink and Purple */
+        .light-mode {
+            background-color: #FF69B4; /* HotPink */
+            color: rgb(0, 0, 0);
+        }
+
+        .light-mode .button {
+            background-color: #FF69B4; /* MediumVioletRed */
+            color: rgb(0, 0, 0);
+        }
+
+        .light-mode .button:hover {
+            background-color: #FF69B4; /* Slightly darker purple on hover */
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 20px;
+            margin: 10px;
+            text-decoration: none;
+            color: rgb(0, 0, 0);
+            background-color:#FFDFDE; /* Default blue button color */
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: scale(1.1);
+        }
+
+        .animated-text {
+            animation: fadeIn 2s ease-in-out infinite alternate;
+            color: rgb(229, 91, 67); /* Tomato color */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0.5;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Info Box Styling */
+        .info-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            background-color:#6A7BA2;
+            transition: background-color 0.5s, color 0.5s;
+            opacity: 0; /* Start with invisible boxes */
+            transform: translateY(30px); /* Start with boxes below the normal position */
+            animation: fadeInUp 1s ease-out forwards; /* Apply fade and slide animation */
+        }
+
+        /* Animation for the info boxes */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Dark Mode Info Box */
+        .dark-mode .info-box {
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
+
+    <script>
+        function toggleMode() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            body.classList.toggle('light-mode');
+        }
+    </script>
+
+    <!-- Toggle Button to Switch Between Dark/Light Mode -->
+    <div style="text-align: center; margin-bottom: 20px;">
+        <button onclick="toggleMode()" class="button">Toggle Dark/Light Mode</button>
+    </div>
+
+    <!-- Info Boxes with Animations -->
+    <div class="info-box">
+        <h2>Simplex Method</h2>
+        <p>The Simplex method is a mathematical optimization technique for linear programming problems. It is used to find the optimal solution to a linear programming problem by iteratively improving the solution.</p>
+        <h1><a href="{% url 'simplex' %}" class="button">Go to Simplex</a></h1>
+    </div>
+
+    <div class="info-box">
+        <h2>Graphical Method</h2>
+        <p>The Graphical method is a way to solve linear programming problems with two variables. It involves graphing the constraints and finding the feasible region to determine the optimal solution.</p>
+        <h1><a href="{% url 'graphical' %}" class="button">Go to Graphical</a></h1>
+    </div>
+
+    <div class="info-box">
+        <h2>Transportation Method</h2>
+        <p>The Transportation method is a type of linear programming problem that deals with transporting goods from multiple sources to multiple destinations in the most cost-effective way.</p>
+        <h1><a href="{% url 'transportation' %}" class="button">Go to Transportation</a></h1>
+    </div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {% extends "base.html" %}
+
+{% block content %}
+    <h1>MP</h1>
+    <h1><a href="{% url 'simplex' %}" class="button">Go to Simplex</a></h1>
+    <h1><a href="{% url 'graphical' %}" class="button">Go to Graphical</a></h1>
+    <h1><a href="{% url 'transportation' %}" class="button">Go to transportation</a></h1>
+{% endblock %} {% endcomment %}

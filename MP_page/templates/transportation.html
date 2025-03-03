@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Transportation Problem{% endblock %}
+
+{% block content %}
+    <h1>Transportation Problem</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="id_num_sources">Number of Sources:</label>
+        <input type="number" id="id_num_sources" name="num_sources" value="1" min="1" required>
+        <br>
+        <label for="id_num_destinations">Number of Destinations:</label>
+        <input type="number" id="id_num_destinations" name="num_destinations" value="1" min="1" required>
+        <br>
+
+        <div id="supply-fields" class="field-group"></div>
+        <div id="demand-fields" class="field-group"></div>
+        <div id="cost-fields" class="field-group"></div>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <style>
+        .field-group input {
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        function generateFields() {
+            var numSources = document.getElementById('id_num_sources').value;
+            var numDestinations = document.getElementById('id_num_destinations').value;
+
+            // Clear the existing dynamic fields
+            document.getElementById('supply-fields').innerHTML = '';
+            document.getElementById('demand-fields').innerHTML = '';
+            document.getElementById('cost-fields').innerHTML = '';
+
+            // Generate supply fields
+            for (var i = 0; i < numSources; i++) {
+                var supplyField = document.createElement('input');
+                supplyField.type = 'number';
+                supplyField.name = 'supply_' + i;
+                supplyField.placeholder = 'Supply for S ' + (i + 1);
+                supplyField.required = true;
+                document.getElementById('supply-fields').appendChild(supplyField);
+                document.getElementById('supply-fields').appendChild(document.createElement('br'));
+            }
+
+            // Generate demand fields
+            for (var j = 0; j < numDestinations; j++) {
+                var demandField = document.createElement('input');
+                demandField.type = 'number';
+                demandField.name = 'demand_' + j;
+                demandField.placeholder = 'Demand for D ' + (j + 1);
+                demandField.required = true;
+                document.getElementById('demand-fields').appendChild(demandField);
+                document.getElementById('demand-fields').appendChild(document.createElement('br'));
+            }
+
+            // Generate cost fields
+            for (var i = 0; i < numSources; i++) {
+                for (var j = 0; j < numDestinations; j++) {
+                    var costField = document.createElement('input');
+                    costField.type = 'number';
+                    costField.name = 'cost_' + i + '_' + j;
+                    costField.placeholder = 'Cost from S ' + (i + 1) + ' to D ' + (j + 1);
+                    costField.required = true;
+                    document.getElementById('cost-fields').appendChild(costField);
+                    document.getElementById('cost-fields').appendChild(document.createElement('br'));
+                }
+            }
+        }
+
+        // Generate the fields when the page is loaded for the first time
+        generateFields();
+
+        // Add event listeners to regenerate fields when the number of sources or destinations changes
+        document.getElementById('id_num_sources').addEventListener('input', generateFields);
+        document.getElementById('id_num_destinations').addEventListener('input', generateFields);
+    </script>
+
+    {% if solution %}
+        <div class="result">
+            <h2>Optimal Transportation Plan:</h2>
+            <table>
+                <tr>
+                    {% for j in range %}
+                        <th>Destination {{ j }}</th>
+                    {% endfor %}
+                </tr>
+                {% for i in range %}
+                    <tr>
+                        {% for j in range %}
+                            <td>{{ solution.i.j }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+            <p><strong>Total Cost:</strong> {{ total_cost }}</p>
+        </div>
+    {% elif status %}
+        <div class="result">
+            <p>No solution found: {{ status }}</p>
+        </div>
+    {% endif %}
+    <h3><a href="/">Back</a></h3>
+{% endblock %}
