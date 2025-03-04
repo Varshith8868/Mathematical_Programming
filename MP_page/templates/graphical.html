@@ -6,37 +6,168 @@
 <html>
 <head>
     <title>Graphical Method Solver</title>
+    <style>
+        /* Background and smooth transition */
+        body {
+            transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Light Mode */
+        .light-mode {
+            background: linear-gradient(120deg, #FFA500, #FF69B4);
+            color: black;
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background: linear-gradient(120deg, #1C1C1C, #333);
+            color: white;
+        }
+
+        /* Main Container */
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .dark-mode .container {
+            background: rgba(40, 40, 40, 0.9);
+            color: white;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Buttons */
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(120deg, #FF4500, #FF1493);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
+            cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background: linear-gradient(120deg, #FF1493, #FF4500);
+            transform: scale(1.1);
+        }
+
+        .dark-mode button {
+            background: linear-gradient(120deg, #1E90FF, #4B0082);
+        }
+
+        .dark-mode button:hover {
+            background: linear-gradient(120deg, #4B0082, #1E90FF);
+        }
+
+        /* Inputs & Select Fields */
+        input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            transition: border 0.3s ease-in-out;
+        }
+
+        .dark-mode input {
+            background: #333;
+            color: white;
+            border: 1px solid #888;
+        }
+
+        /* Results Section */
+        .results {
+            opacity: 0;
+            animation: fadeInResults 1s ease-in-out forwards 0.5s;
+        }
+
+        @keyframes fadeInResults {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Error Message */
+        .error {
+            color: red;
+            font-size: 18px;
+            font-weight: bold;
+            animation: fadeInResults 0.5s ease-in-out;
+        }
+    </style>
+
+    <script>
+        function toggleMode() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            body.classList.toggle('light-mode');
+
+            // Save user preference
+            localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+        }
+
+        // Apply theme on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            if (localStorage.getItem("theme") === "dark") {
+                document.body.classList.add("dark-mode");
+            } else {
+                document.body.classList.add("light-mode");
+            }
+        });
+    </script>
 </head>
 <body>
-    <h1>Linear Programming Solver</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <h2>Constraints</h2>
-        <div id="constraints">
-            {% for i in num_constraints_range %}
-                <div>
-                    <label for="constraint_{{ i }}_c1">Coefficient for x1:</label>
-                    <input type="number" step="any" name="constraint_{{ i }}_c1" required>
-                    <label for="constraint_{{ i }}_c2">Coefficient for x2:</label>
-                    <input type="number" step="any" name="constraint_{{ i }}_c2" required>
-                    <label for="constraint_{{ i }}_rhs">Right-hand side:</label>
-                    <input type="number" step="any" name="constraint_{{ i }}_rhs" required>
-                </div>
-            {% endfor %}
-        </div>
-        <button type="submit">Solve</button>
-    </form>
+    <div class="container">
+        <h1>Graphical Method Solver</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            
+            <h2>Constraints</h2>
+            <div id="constraints">
+                {% for i in num_constraints_range %}
+                    <div>
+                        <label for="constraint_{{ i }}_c1">Coefficient for x1:</label>
+                        <input type="number" step="any" name="constraint_{{ i }}_c1" required>
+                        <label for="constraint_{{ i }}_c2">Coefficient for x2:</label>
+                        <input type="number" step="any" name="constraint_{{ i }}_c2" required>
+                        <label for="constraint_{{ i }}_rhs">Right-hand side:</label>
+                        <input type="number" step="any" name="constraint_{{ i }}_rhs" required>
+                    </div>
+                {% endfor %}
+            </div>
 
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% elif image %}
-        <h2>Results</h2>
-        <p>Optimal Vertex: {{ optimal_vertex }}</p>
-        <p>Optimal Value: {{ optimal_value }}</p>
-        <img src="data:image/png;base64,{{ image }}" alt="Solution Graph">
-    {% endif %}
+            <button type="submit">Solve</button>
+        </form>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% elif image %}
+            <div class="results">
+                <h2>Results</h2>
+                <p>Optimal Vertex: {{ optimal_vertex }}</p>
+                <p>Optimal Value: {{ optimal_value }}</p>
+                <img src="data:image/png;base64,{{ image }}" alt="Solution Graph" style="max-width:100%; border-radius: 10px;">
+            </div>
+        {% endif %}
+
         <h3><a href="/">Back</a></h3>
+    </div>
 </body>
 </html>
 {% endblock %}

@@ -7,61 +7,152 @@
 <head>
     <title>Simplex Method Solver</title>
     <style>
+        /* Smooth Background Transition */
         body {
-            background: linear-gradient(120deg, #f0f0f0, #d6d6d6);
-            color: black;
+            transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
             text-align: center;
             padding: 20px;
-            animation: fadeIn 1s ease-in-out;
         }
+
+        /* Light Mode - Vibrant Colors */
+        .light-mode {
+            background: linear-gradient(120deg, #FF69B4, #FFD700);
+            color: black;
+        }
+
+        /* Dark Mode - Sleek & Modern */
+        .dark-mode {
+            background: linear-gradient(120deg, #121212, #1E1E1E);
+            color: white;
+        }
+
+        /* Container Styling */
         .container {
             background: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            animation: slideIn 1s ease-in-out;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 1s ease-out forwards;
         }
+
+        .dark-mode .container {
+            background: rgba(40, 40, 40, 0.9);
+            color: white;
+        }
+
+        /* Smooth Fade-in Animation */
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Buttons - Modern and Vibrant */
         button {
-            transition: 0.3s;
-            background-color: #007bff;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            background: linear-gradient(120deg, #FF1493, #FF4500);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 8px;
+            transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
             cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         }
+
         button:hover {
+            background: linear-gradient(120deg, #FF4500, #FF1493);
             transform: scale(1.1);
-            background-color: #0056b3;
         }
+
+        /* Dark Mode Button */
+        .dark-mode button {
+            background: linear-gradient(120deg, #1E90FF, #4B0082);
+        }
+
+        .dark-mode button:hover {
+            background: linear-gradient(120deg, #4B0082, #1E90FF);
+        }
+
+        /* Inputs & Select Fields */
+        input, select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            transition: border 0.3s ease-in-out;
+        }
+
+        .dark-mode input, .dark-mode select {
+            background: #333;
+            color: white;
+            border: 1px solid #888;
+        }
+
+        /* Table Styling */
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
         }
+
         table, th, td {
             border: 1px solid #ddd;
         }
+
         th, td {
             padding: 10px;
             text-align: center;
         }
+
         th {
             background-color: #f2f2f2;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+
+        .dark-mode th {
+            background-color: #444;
         }
-        @keyframes slideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+
+        /* Floating Animated Text */
+        .animated-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #E55B43;
+            animation: floatText 3s infinite ease-in-out alternate;
+        }
+
+        @keyframes floatText {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(10px); }
         }
     </style>
+
+    <script>
+        function toggleMode() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            body.classList.toggle('light-mode');
+
+            // Save user preference in localStorage
+            localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+        }
+
+        // Apply theme on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            if (localStorage.getItem("theme") === "dark") {
+                document.body.classList.add("dark-mode");
+            } else {
+                document.body.classList.add("light-mode");
+            }
+        });
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1>Simplex Method Solver</h1>
+        <h1 class="animated-text">Simplex Method Solver</h1>
 
         <!-- Form to specify the number of variables and constraints -->
         <form method="POST">
@@ -113,15 +204,6 @@
         {% endif %}
 
         <!-- Display Results -->
-        {% if A and b and c %}
-        <h2>Parsed Input:</h2>
-        <h3>
-        <p><strong>Objective Function Coefficients (c):</strong> {{ c }}</p>
-        <p><strong>Constraint Matrix (A):</strong> {{ A }}</p>
-        <p><strong>RHS Vector (b):</strong> {{ b }}</p>
-        </h3>
-        {% endif %}
-
         {% if solution %}
             <h1>Solution:</h1> 
             <h2>
@@ -145,10 +227,6 @@
         </h2>
         {% endif %}
 
-        {% if error %}
-            <h3>Error:</h3>
-            <p>{{ error }}</p>
-        {% endif %}
         <h3><a href="/">Back</a></h3>
     </div>
 </body>

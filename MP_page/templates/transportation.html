@@ -3,35 +3,146 @@
 {% block title %}Transportation Problem{% endblock %}
 
 {% block content %}
-    <h1>Transportation Problem</h1>
-    <form method="POST">
-        {% csrf_token %}
-        <label for="id_num_sources">Number of Sources:</label>
-        <input type="number" id="id_num_sources" name="num_sources" value="1" min="1" required>
-        <br>
-        <label for="id_num_destinations">Number of Destinations:</label>
-        <input type="number" id="id_num_destinations" name="num_destinations" value="1" min="1" required>
-        <br>
 
-        <div id="supply-fields" class="field-group"></div>
-        <div id="demand-fields" class="field-group"></div>
-        <div id="cost-fields" class="field-group"></div>
-
-        <button type="submit">Submit</button>
-    </form>
-
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transportation Problem Solver</title>
     <style>
-        .field-group input {
-            margin-bottom: 10px;
+        /* Smooth background transition */
+        body {
+            transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Light Mode */
+        .light-mode {
+            background: linear-gradient(120deg, #FFA500, #FF69B4);
+            color: black;
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background: linear-gradient(120deg, #1C1C1C, #333);
+            color: white;
+        }
+
+        /* Main Container */
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .dark-mode .container {
+            background: rgba(40, 40, 40, 0.9);
+            color: white;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Buttons */
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(120deg, #FF4500, #FF1493);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
+            cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background: linear-gradient(120deg, #FF1493, #FF4500);
+            transform: scale(1.1);
+        }
+
+        .dark-mode button {
+            background: linear-gradient(120deg, #1E90FF, #4B0082);
+        }
+
+        .dark-mode button:hover {
+            background: linear-gradient(120deg, #4B0082, #1E90FF);
+        }
+
+        /* Inputs & Fields */
+        input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            transition: border 0.3s ease-in-out;
+        }
+
+        .dark-mode input {
+            background: #333;
+            color: white;
+            border: 1px solid #888;
+        }
+
+        /* Result Table */
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid black;
+        }
+
+        .dark-mode th, .dark-mode td {
+            border: 1px solid white;
+        }
+
+        /* Results Section */
+        .result {
+            opacity: 0;
+            animation: fadeInResults 1s ease-in-out forwards 0.5s;
+        }
+
+        @keyframes fadeInResults {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
         }
     </style>
 
-    <script type="text/javascript">
+    <script>
+        function toggleMode() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            body.classList.toggle('light-mode');
+
+            // Save user preference
+            localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+        }
+
+        // Apply theme on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            if (localStorage.getItem("theme") === "dark") {
+                document.body.classList.add("dark-mode");
+            } else {
+                document.body.classList.add("light-mode");
+            }
+        });
+
         function generateFields() {
             var numSources = document.getElementById('id_num_sources').value;
             var numDestinations = document.getElementById('id_num_destinations').value;
 
-            // Clear the existing dynamic fields
             document.getElementById('supply-fields').innerHTML = '';
             document.getElementById('demand-fields').innerHTML = '';
             document.getElementById('cost-fields').innerHTML = '';
@@ -72,37 +183,52 @@
             }
         }
 
-        // Generate the fields when the page is loaded for the first time
-        generateFields();
-
-        // Add event listeners to regenerate fields when the number of sources or destinations changes
+        document.addEventListener("DOMContentLoaded", generateFields);
         document.getElementById('id_num_sources').addEventListener('input', generateFields);
         document.getElementById('id_num_destinations').addEventListener('input', generateFields);
     </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Transportation Problem</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="id_num_sources">Number of Sources:</label>
+            <input type="number" id="id_num_sources" name="num_sources" value="1" min="1" required>
+            <br>
+            <label for="id_num_destinations">Number of Destinations:</label>
+            <input type="number" id="id_num_destinations" name="num_destinations" value="1" min="1" required>
+            <br>
 
-    {% if solution %}
-        <div class="result">
-            <h2>Optimal Transportation Plan:</h2>
-            <table>
-                <tr>
-                    {% for j in range %}
-                        <th>Destination {{ j }}</th>
-                    {% endfor %}
-                </tr>
-                {% for i in range %}
+            <div id="supply-fields"></div>
+            <div id="demand-fields"></div>
+            <div id="cost-fields"></div>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        {% if solution %}
+            <div class="result">
+                <h2>Optimal Transportation Plan:</h2>
+                <table>
                     <tr>
                         {% for j in range %}
-                            <td>{{ solution.i.j }}</td>
+                            <th>Destination {{ j }}</th>
                         {% endfor %}
                     </tr>
-                {% endfor %}
-            </table>
-            <p><strong>Total Cost:</strong> {{ total_cost }}</p>
-        </div>
-    {% elif status %}
-        <div class="result">
-            <p>No solution found: {{ status }}</p>
-        </div>
-    {% endif %}
-    <h3><a href="/">Back</a></h3>
+                    {% for i in range %}
+                        <tr>
+                            {% for j in range %}
+                                <td>{{ solution.i.j }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+                <p><strong>Total Cost:</strong> {{ total_cost }}</p>
+            </div>
+        {% endif %}
+        <h3><a href="/">Back</a></h3>
+    </div>
+</body>
+</html>
 {% endblock %}

@@ -2,93 +2,98 @@
 
 {% block content %}
     <style>
+        /* Smooth Background Transition */
         body {
-            transition: background-color 0.5s, color 0.5s;
+            transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
         }
 
-        /* Dark Mode */
-        .dark-mode {
-            background-color: #121212;
-            color: rgb(0, 0, 0);
-        }
-
-        /* Light Mode - Pink and Purple */
+        /* Light Mode - Vibrant Colors */
         .light-mode {
-            background-color: #FF69B4; /* HotPink */
-            color: rgb(0, 0, 0);
+            background: linear-gradient(120deg, #FF69B4, #FFD700);
+            color: #000;
         }
 
-        .light-mode .button {
-            background-color: #FF69B4; /* MediumVioletRed */
-            color: rgb(0, 0, 0);
+        /* Dark Mode - Sleek & Modern */
+        .dark-mode {
+            background: linear-gradient(120deg, #121212, #1E1E1E);
+            color: #fff;
         }
 
-        .light-mode .button:hover {
-            background-color: #FF69B4; /* Slightly darker purple on hover */
-        }
-
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 20px;
-            margin: 10px;
-            text-decoration: none;
-            color: rgb(0, 0, 0);
-            background-color:#FFDFDE; /* Default blue button color */
-            border-radius: 5px;
-            transition: background-color 0.3s, transform 0.3s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .button:hover {
-            background-color: #0056b3; /* Darker blue on hover */
-            transform: scale(1.1);
-        }
-
-        .animated-text {
-            animation: fadeIn 2s ease-in-out infinite alternate;
-            color: rgb(229, 91, 67); /* Tomato color */
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0.5;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Info Box Styling */
+        /* 3D Info Box Styling */
         .info-box {
-            border: 1px solid #ccc;
+            border: none;
             padding: 20px;
             margin: 20px 0;
-            border-radius: 10px;
-            background-color:#6A7BA2;
-            transition: background-color 0.5s, color 0.5s;
-            opacity: 0; /* Start with invisible boxes */
-            transform: translateY(30px); /* Start with boxes below the normal position */
-            animation: fadeInUp 1s ease-out forwards; /* Apply fade and slide animation */
+            border-radius: 15px;
+            background: linear-gradient(120deg, #6A7BA2, #FF91A4);
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 1s ease-out forwards;
         }
 
-        /* Animation for the info boxes */
-        @keyframes fadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .info-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
         }
 
         /* Dark Mode Info Box */
         .dark-mode .info-box {
-            background-color: #333;
+            background: linear-gradient(120deg, #2C3E50, #4CA1AF);
             color: #fff;
+        }
+
+        /* Staggered Animation Delay */
+        .info-box:nth-child(1) { animation-delay: 0.3s; }
+        .info-box:nth-child(2) { animation-delay: 0.5s; }
+        .info-box:nth-child(3) { animation-delay: 0.7s; }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Buttons - Modern and Vibrant */
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            background: linear-gradient(120deg, #FF1493, #FF4500);
+            color: white;
+            border-radius: 8px;
+            transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button:hover {
+            background: linear-gradient(120deg, #FF4500, #FF1493);
+            transform: scale(1.1);
+        }
+
+        /* Dark Mode Button */
+        .dark-mode .button {
+            background: linear-gradient(120deg, #1E90FF, #4B0082);
+            color: white;
+        }
+
+        .dark-mode .button:hover {
+            background: linear-gradient(120deg, #4B0082, #1E90FF);
+        }
+
+        /* Floating Animated Text */
+        .animated-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #E55B43;
+            animation: floatText 3s infinite ease-in-out alternate;
+        }
+
+        @keyframes floatText {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(10px); }
         }
     </style>
 
@@ -97,33 +102,43 @@
             const body = document.body;
             body.classList.toggle('dark-mode');
             body.classList.toggle('light-mode');
+
+            // Save user preference in localStorage
+            localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
         }
+
+        // Apply theme on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            if (localStorage.getItem("theme") === "dark") {
+                document.body.classList.add("dark-mode");
+            } else {
+                document.body.classList.add("light-mode");
+            }
+        });
     </script>
 
-   
+    <!-- Animated Floating Text -->
+    <h2 class="animated-text">Welcome to Math Solver</h2>
 
-    <!-- Info Boxes with Animations -->
+    <!-- Info Boxes -->
     <div class="info-box">
         <h2>Simplex Method</h2>
-        <p>The Simplex method is a mathematical optimization technique for linear programming problems. It is used to find the optimal solution to a linear programming problem by iteratively improving the solution.</p>
+        <p>The Simplex method is a mathematical optimization technique for linear programming problems. It iteratively finds the optimal solution.</p>
         <h1><a href="{% url 'simplex' %}" class="button">Go to Simplex</a></h1>
     </div>
 
     <div class="info-box">
         <h2>Graphical Method</h2>
-        <p>The Graphical method is a way to solve linear programming problems with two variables. It involves graphing the constraints and finding the feasible region to determine the optimal solution.</p>
+        <p>The Graphical method is used for solving linear programming problems with two variables by graphing constraints and finding the feasible region.</p>
         <h1><a href="{% url 'graphical' %}" class="button">Go to Graphical</a></h1>
     </div>
 
     <div class="info-box">
         <h2>Transportation Method</h2>
-        <p>The Transportation method is a type of linear programming problem that deals with transporting goods from multiple sources to multiple destinations in the most cost-effective way.</p>
+        <p>The Transportation method optimizes the cost of transporting goods from multiple sources to multiple destinations.</p>
         <h1><a href="{% url 'transportation' %}" class="button">Go to Transportation</a></h1>
     </div>
 {% endblock %}
-
-
-
 
 
 
